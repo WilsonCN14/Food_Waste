@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "204007150241",
+    "project_id": "food-waste-871bb",
+    "storage_bucket": "food-waste-871bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:204007150241:android:ae082ba1085b90560a56e0",
+        "android_client_info": {
+          "package_name": "edu.oregonstate.u934306720.food_waste"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "204007150241-esjt1ur6rr97b13955859itncopre56t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANVXUyirDDu324FWvf1yqgrw2wYw7DyF8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "204007150241-esjt1ur6rr97b13955859itncopre56t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
