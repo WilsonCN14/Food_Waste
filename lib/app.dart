@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/new_post_screen.dart';
+import 'screens/list_screen.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
@@ -11,7 +11,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green
       ),
-      home: const NewPostScreen(),
+      home: const ListScreen(),
     );
   }
 }

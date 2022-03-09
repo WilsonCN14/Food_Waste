@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'list_screen.dart';
 import '../widgets/new_post_screen_widgets.dart';
+import 'package:location/location.dart';
 
 class NewPostScreen extends StatefulWidget {
   const NewPostScreen({ Key? key }) : super(key: key);
@@ -50,7 +52,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => {},
+          onPressed: () {
+            // Find current date
+            // Find current latitute and longitude
+            // Should I have a model to hold the information like in the journal project?
+            pushListScreen(context);
+          },
           tooltip: 'Upload Post',
           child: const Icon(Icons.upload),
         ),
@@ -58,4 +65,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
       );
     }
   }
+}
+
+void pushListScreen(BuildContext context) {
+  Navigator.pushAndRemoveUntil(context, 
+  MaterialPageRoute(builder: (context) => const ListScreen()), 
+  (Route<dynamic> route) => false);
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'detail_screen.dart';
+import 'new_post_screen.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({ Key? key }) : super(key: key);
@@ -26,7 +28,8 @@ class _ListScreenState extends State<ListScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Text(post.numFood.toString()),
       ),
-      onTap: () => {}, // () => toDetailScreen(context, index)
+      onTap: () {Navigator.push(context, MaterialPageRoute(
+        builder: (context) => const DetailScreen()));},
     );
   }
 
@@ -44,7 +47,8 @@ class _ListScreenState extends State<ListScreen> {
         separatorBuilder: (BuildContext context, int index) => const Divider(),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
+        onPressed: () {Navigator.push(context, MaterialPageRoute(
+          builder: (context) => const NewPostScreen()));},
         tooltip: 'Add New Post',
         child: const Icon(Icons.add_a_photo),
       ),
