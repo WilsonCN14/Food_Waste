@@ -1,6 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'detail_screen.dart';
-import 'new_post_screen.dart';
+import '../widgets/navigation_widgets.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({ Key? key }) : super(key: key);
@@ -11,25 +11,21 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
 
-  static const List<MockPost> postList = [
-    MockPost(date: 'Tuesday, March 3', numFood: 2),
-    MockPost(date: 'Friday, March 4', numFood: 5),
-    MockPost(date: 'Tuesday, March 8', numFood: 10),
-  ];
 
-  Widget displayPost(BuildContext context, MockPost post) {
+  final Stream<QuerySnapshot> _postsStream = FirebaseFirestore.instance.collection('posts').snapshots();
+
+  Widget displayPost(BuildContext context, DocumentSnapshot post) {
     return ListTile(
-      title: Text(post.date),
+      title: Text(post['date']),
       trailing: Container(
         decoration: BoxDecoration(
           border: Border.all(width: 2),
           shape: BoxShape.circle, 
         ),
         padding: const EdgeInsets.all(8.0),
-        child: Text(post.numFood.toString()),
+        child: Text(post['quantity'].toString()),
       ),
-      onTap: () {Navigator.push(context, MaterialPageRoute(
-        builder: (context) => const DetailScreen()));},
+      onTap: () {pushDetailScreen(context);}
     );
   }
 
@@ -40,26 +36,29 @@ class _ListScreenState extends State<ListScreen> {
         title: const Text('Food Waste'),
         centerTitle: true,
       ),
-      body: ListView.separated(
-        itemCount: postList.length,
-        itemBuilder: (BuildContext context, int index) =>
-          displayPost(context, postList[index]),
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _postsStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+            return ListView.separated(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                var post = snapshot.data!.docs[index];
+                return displayPost(context, post);
+              },
+              separatorBuilder: (BuildContext context, int index) => const Divider(),
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        }
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {Navigator.push(context, MaterialPageRoute(
-          builder: (context) => const NewPostScreen()));},
+        onPressed: () {pushNewPostScreen(context);},
         tooltip: 'Add New Post',
         child: const Icon(Icons.add_a_photo),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-}
-
-class MockPost {
-  const MockPost({required this.date, required this.numFood});
-
-  final String date;
-  final int numFood;
 }
