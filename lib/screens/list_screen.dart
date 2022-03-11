@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../models/post.dart';
 import '../widgets/navigation_widgets.dart';
 
 class ListScreen extends StatefulWidget {
@@ -11,12 +13,17 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
 
-
-  final Stream<QuerySnapshot> _postsStream = FirebaseFirestore.instance.collection('posts').snapshots();
-
+  final Stream<QuerySnapshot> _postsStream = FirebaseFirestore.instance
+    .collection('posts')
+    .orderBy('date', descending: true)
+    .snapshots();
+  
   Widget displayPost(BuildContext context, DocumentSnapshot post) {
+
+    var date = DateFormat('EEEE, MMMM d, h:mm a').format(DateTime.fromMillisecondsSinceEpoch(post['date'])).toString();
+
     return ListTile(
-      title: Text(post['date']),
+      title: Text(date.toString()),
       trailing: Container(
         decoration: BoxDecoration(
           border: Border.all(width: 2),
@@ -25,7 +32,7 @@ class _ListScreenState extends State<ListScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Text(post['quantity'].toString()),
       ),
-      onTap: () {pushDetailScreen(context);}
+      onTap: () {pushDetailScreen(context, post);}
     );
   }
 
@@ -44,19 +51,24 @@ class _ListScreenState extends State<ListScreen> {
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 var post = snapshot.data!.docs[index];
+                // var data = post.data();
+                // print(data);
                 return displayPost(context, post);
               },
               separatorBuilder: (BuildContext context, int index) => const Divider(),
             );
           } else {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
         }
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {pushNewPostScreen(context);},
-        tooltip: 'Add New Post',
-        child: const Icon(Icons.add_a_photo),
+      floatingActionButton: Semantics(
+        child: FloatingActionButton(
+          onPressed: () {pushNewPostScreen(context);},
+          child: const Icon(Icons.add_a_photo),
+        ),
+        button: true,
+        label: 'Add New Post button',
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
