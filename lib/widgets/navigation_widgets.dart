@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../models/post.dart';
 import '../screens/detail_screen.dart';
 import '../screens/list_screen.dart';
 import '../screens/new_post_screen.dart';
 
 // Go to Detail Screen
-void pushDetailScreen(BuildContext context, DocumentSnapshot post) {
+void pushDetailScreen(BuildContext context, Post post) {
   Navigator.push(context, MaterialPageRoute(
       builder: (context) => const DetailScreen(),
       settings: RouteSettings(arguments: post),

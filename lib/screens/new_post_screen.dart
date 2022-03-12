@@ -8,6 +8,11 @@ import 'package:location/location.dart';
 import '../models/post_dto.dart';
 import '../widgets/navigation_widgets.dart';
 
+/*
+* Screen where user uploads a new post
+* User takes a picture and inputs a quantity of wasted items
+* Location and date are automatically recorded when post is uploaded
+*/
 class NewPostScreen extends StatefulWidget {
   const NewPostScreen({ Key? key }) : super(key: key);
 
@@ -29,6 +34,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
 
   late int date;
   late int quantity;
+
+  // Check if form is submitting so can put up progress circle when busy
   bool isSubmitting = false;
 
   @override
@@ -81,10 +88,6 @@ class _NewPostScreenState extends State<NewPostScreen> {
   void takePhoto() async {
     final newFile = await picker.pickImage(source: ImageSource.camera);
     image = File(newFile!.path);
-
-    // Call setState now to go to fillOutFormWidget after getting image.
-    // If we call setState at end of takePhoto(), depending on speed of upload,
-    // we may see the getImageWidget briefly before going to fillOutFormWidget.
     setState(() {});
 
     // Upload file to Firebase Storage
@@ -94,7 +97,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
     await uploadTask;
 
     // Obtain url from Firebase Storage to upload it to post in Firestore
-    imageURL = await storageReference.getDownloadURL();
+    postDTO.imageURL = await storageReference.getDownloadURL();
   }
 
   Widget displayImage(BuildContext context) {
@@ -120,7 +123,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
           } else if (int.tryParse(value) == null){
             return 'Please enter a number';
           } else {
-            quantity = int.tryParse(value) ?? 0;
+            postDTO.quantity = int.tryParse(value) ?? 0;
             return null;
           }
         }
@@ -143,13 +146,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
             });
             getCurrentDate();
             await getCurrentLocation();
-            FirebaseFirestore.instance.collection('posts').add({
-              'date': date,
-              'imageURL': imageURL,
-              'quantity': quantity,
-              'latitude': locationData!.latitude,
-              'longitude': locationData!.longitude,
-            });
+            postDTO.latitude = locationData!.latitude;
+            postDTO.longitude = locationData!.longitude;
+            FirebaseFirestore.instance.collection('posts').add(postDTO.toMap());
             setState(() {
               isSubmitting = false;
             });
@@ -164,7 +163,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
   }
 
   void getCurrentDate() {
-    date = DateTime.now().millisecondsSinceEpoch;
+    postDTO.date = DateTime.now();
   }
 
   Future<Object> getCurrentLocation() async {

@@ -4,6 +4,10 @@ import 'package:intl/intl.dart';
 import '../models/post.dart';
 import '../widgets/navigation_widgets.dart';
 
+/*
+* Screen that shows list of all posts
+* Only shows date and number of wasted items for each post
+*/
 class ListScreen extends StatefulWidget {
   const ListScreen({ Key? key }) : super(key: key);
 
@@ -18,24 +22,6 @@ class _ListScreenState extends State<ListScreen> {
     .orderBy('date', descending: true)
     .snapshots();
   
-  Widget displayPost(BuildContext context, DocumentSnapshot post) {
-
-    var date = DateFormat('EEEE, MMMM d, h:mm a').format(DateTime.fromMillisecondsSinceEpoch(post['date'])).toString();
-
-    return ListTile(
-      title: Text(date.toString()),
-      trailing: Container(
-        decoration: BoxDecoration(
-          border: Border.all(width: 2),
-          shape: BoxShape.circle, 
-        ),
-        padding: const EdgeInsets.all(8.0),
-        child: Text(post['quantity'].toString()),
-      ),
-      onTap: () {pushDetailScreen(context, post);}
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,9 +36,8 @@ class _ListScreenState extends State<ListScreen> {
             return ListView.separated(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                var post = snapshot.data!.docs[index];
-                // var data = post.data();
-                // print(data);
+                Map<String, dynamic> document = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                Post post = Post.fromMap(document);
                 return displayPost(context, post);
               },
               separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -71,6 +56,21 @@ class _ListScreenState extends State<ListScreen> {
         label: 'Add New Post button',
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget displayPost(BuildContext context, Post post) {
+    return ListTile(
+      title: Text(DateFormat('EEEE, MMMM d, h:mm a').format(post.date).toString()),
+      trailing: Container(
+        decoration: BoxDecoration(
+          border: Border.all(width: 2),
+          shape: BoxShape.circle, 
+        ),
+        padding: const EdgeInsets.all(8.0),
+        child: Text(post.quantity.toString()),
+      ),
+      onTap: () {pushDetailScreen(context, post);}
     );
   }
 }

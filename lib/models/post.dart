@@ -1,9 +1,12 @@
+/*
+* Used to organize data from database
+*/
 class Post {
   final DateTime date;
   final String imageURL;
   final int quantity;
-  final double? latitude;
-  final double? longitude;
+  final double latitude;
+  final double longitude;
 
   const Post({
     required this.date,
@@ -13,13 +16,14 @@ class Post {
     required this.longitude,
   });
   
-  // factory Post.fromJSON(Map<String, dynamic> json) {
-  //   return Post(
-  //     date: json['date'],
-  //     imageURL: json['imageURL'],
-  //     quantity: int.parse(json['quantity']),
-  //     latitude: double.parse(json['latitute']),
-  //     longitude: double.parse(json['longitude']),
-  //   );
-  // }
+  factory Post.fromMap(Map<String, dynamic> document) {
+    return Post(
+      // date stored as int in Firestore so need to convert to DateTime
+      date: DateTime.fromMillisecondsSinceEpoch(document['date']), 
+      imageURL: document['imageURL'],
+      quantity: document['quantity'],
+      latitude: document['latitude'],
+      longitude: document['longitude'],
+    );
+  }
 }
